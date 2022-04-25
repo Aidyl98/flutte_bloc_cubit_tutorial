@@ -1,5 +1,7 @@
+import 'package:flutte_bloc_cubit_tutorial/cubit/weather_cubit.dart';
 import 'package:flutte_bloc_cubit_tutorial/data/model/weather.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class WeatherSearchPage extends StatefulWidget {
   const WeatherSearchPage({Key? key}) : super(key: key);
@@ -18,8 +20,20 @@ class _WeatherSearchPageState extends State<WeatherSearchPage> {
       body: Container(
         padding: const EdgeInsets.symmetric(vertical: 16),
         alignment: Alignment.center,
-        // TODO: Implement with cubit
-        child: buildInitialInput(),
+        child: BlocBuilder<WeatherCubit, WeatherState>(
+          builder: (context, state) {
+            if (state is WeatherInitial) {
+              return buildInitialInput();
+            } else if (state is WeatherLoading) {
+              return buildLoading();
+            } else if (state is WeatherLoaded) {
+              return buildColumnWithData(state.weather);
+            } else {
+              // (state is WeatherError)
+              return buildInitialInput();
+            }
+          },
+        ),
       ),
     );
   }
