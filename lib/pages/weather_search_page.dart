@@ -1,7 +1,8 @@
-import 'package:flutte_bloc_cubit_tutorial/cubit/weather_cubit.dart';
 import 'package:flutte_bloc_cubit_tutorial/data/model/weather.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../bloc/weather_bloc.dart';
 
 class WeatherSearchPage extends StatefulWidget {
   const WeatherSearchPage({Key? key}) : super(key: key);
@@ -20,7 +21,7 @@ class _WeatherSearchPageState extends State<WeatherSearchPage> {
       body: Container(
         padding: const EdgeInsets.symmetric(vertical: 16),
         alignment: Alignment.center,
-        child: BlocConsumer<WeatherCubit, WeatherState>(
+        child: BlocConsumer<WeatherBloc, WeatherState>(
           listener: (context, state) {
             if (state is WeatherError) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -31,7 +32,7 @@ class _WeatherSearchPageState extends State<WeatherSearchPage> {
             }
           },
           builder: (context, state) {
-            return BlocBuilder<WeatherCubit, WeatherState>(
+            return BlocBuilder<WeatherBloc, WeatherState>(
               builder: (context, state) {
                 if (state is WeatherInitial) {
                   return buildInitialInput();
@@ -104,8 +105,13 @@ class CityInputField extends StatelessWidget {
     );
   }
 
+  // void submitCityName(BuildContext context, String cityName) {
+  //   final weatherCubit = BlocProvider.of<WeatherCubit>(context);
+  //   weatherCubit.getWeather(cityName);
+  // }
+
   void submitCityName(BuildContext context, String cityName) {
-    final weatherCubit = BlocProvider.of<WeatherCubit>(context);
-    weatherCubit.getWeather(cityName);
+    final weatherBloc = BlocProvider.of<WeatherBloc>(context);
+    weatherBloc.add(GetWeather(cityName));
   }
 }
